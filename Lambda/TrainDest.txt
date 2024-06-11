@@ -1,0 +1,28 @@
+Node JS - Lambda 
+
+
+const trains = {
+        'Coromandel': 'Chennai Central',
+        'Rajdhani': 'New Delhi',
+        'APExpress': 'Vizag',
+    // Add more trains and their destinations here
+};
+
+export async function handler(event) {
+    const trainName = event.trainName;
+    const destination = trains[trainName];
+    
+    if (!destination) {
+        return `Train not found: ${trainName}`;
+    }
+    
+    return `The destination of ${trainName} is ${destination}`;
+};
+
+
+
+-------------------------------------------------
+{
+  "trainName": "APExpress"
+}
+-------------------------------------------------
