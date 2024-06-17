@@ -1,0 +1,100 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: AWS CloudFormation Template to create a simple web application using Lambda and API Gateway
+
+Resources:
+  MyLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties: 
+      AssumeRolePolicyDocument: 
+        Version: '2012-10-17'
+        Statement: 
+          - Effect: Allow
+            Principal: 
+              Service: 
+                - lambda.amazonaws.com
+            Action: 
+              - sts:AssumeRole
+      Policies: 
+        - PolicyName: LambdaBasicExecution
+          PolicyDocument: 
+            Version: '2012-10-17'
+            Statement: 
+              - Effect: Allow
+                Action: 
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: "*"
+
+  MyLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties: 
+      Handler: index.handler
+      Role: !GetAtt MyLambdaExecutionRole.Arn
+      Code: 
+        ZipFile: |
+          def handler(event, context):
+              return {
+                  'statusCode': 200,
+                  'headers': {
+                      'Content-Type': 'text/html',
+                  },
+                  'body': '<html><body><h1>Hello, World!</h1></body></html>'
+              }
+      Runtime: python3.8
+      Timeout: 10
+      MemorySize: 128
+
+  MyApiGatewayRestApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: MyApi
+
+  MyApiGatewayResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt MyApiGatewayRestApi.RootResourceId
+      PathPart: "mywebapp"
+      RestApiId: !Ref MyApiGatewayRestApi
+
+  MyApiGatewayMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: "NONE"
+      HttpMethod: "GET"
+      ResourceId: !Ref MyApiGatewayResource
+      RestApiId: !Ref MyApiGatewayRestApi
+      Integration:
+        IntegrationHttpMethod: "POST"
+        Type: "AWS_PROXY"
+        Uri: !Sub
+          - arn:aws:apigateway:${Region}:lambda:path/2015-03-31/functions/${LambdaArn}/invocations
+          - Region: !Ref "AWS::Region"
+            LambdaArn: !GetAtt MyLambdaFunction.Arn
+
+  MyApiGatewayDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref MyApiGatewayRestApi
+      StageName: "prod"
+    DependsOn: MyApiGatewayMethod
+
+  MyLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: "lambda:InvokeFunction"
+      FunctionName: !Ref MyLambdaFunction
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub
+        - arn:aws:execute-api:${Region}:${AccountId}:${ApiId}/*
+        - Region: !Ref "AWS::Region"
+          AccountId: !Ref "AWS::AccountId"
+          ApiId: !Ref MyApiGatewayRestApi
+
+Outputs:
+  ApiUrl:
+    Description: "URL for the web application"
+    Value: !Sub
+      - https://${ApiId}.execute-api.${Region}.amazonaws.com/prod/mywebapp
+      - ApiId: !Ref MyApiGatewayRestApi
+        Region: !Ref "AWS::Region"
