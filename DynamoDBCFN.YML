@@ -1,0 +1,25 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: AWS CloudFormation template to create a DynamoDB table named CustomerStocks
+
+Resources:
+  CustomerStocksTable:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      TableName: 'CustomerStocks'
+      AttributeDefinitions:
+        - AttributeName: 'CustomerID'
+          AttributeType: 'S'
+      KeySchema:
+        - AttributeName: 'CustomerID'
+          KeyType: 'HASH'
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+Outputs:
+  TableName:
+    Description: 'Name of the DynamoDB table'
+    Value: !Ref CustomerStocksTable
+  TableArn:
+    Description: 'ARN of the DynamoDB table'
+    Value: !GetAtt CustomerStocksTable.Arn
