@@ -1,0 +1,154 @@
+DynamoDB table called Employees to store employee records. Each record contains the following attributes:
+
+EmployeeID (Partition Key)
+Name
+Department
+JoiningDate
+Salary
+Location
+
+
+--------------------------------------------------------------------
+An LSI allows you to create an alternate sort key for your table while using the same partition key. LSIs can only be created at table creation time and allow you to perform queries based on a different sort key.
+Use Case:You want to query employees within the same department and sort them by their joining date.
+-------------------------------------------------------------------------------------------------------
+A GSI allows you to create an index with a different partition key and sort key than the primary key of the table. GSIs can be created at any time (not just at table creation).
+Use Case: You want to query employees by their location and sort them by their salary.
+------------------------------------------------------------------
+
+Creating a Table with LSI 
+------------------------
+import json
+import boto3
+
+def lambda_handler(event, context):
+    dynamodb = boto3.resource('dynamodb')
+    
+    table = dynamodb.create_table(
+        TableName='Employees',
+        KeySchema=[
+            {'AttributeName': 'EmployeeID', 'KeyType': 'HASH'},  # Partition key
+            {'AttributeName': 'Department', 'KeyType': 'RANGE'}  # Sort key
+        ],
+        AttributeDefinitions=[
+            {'AttributeName': 'EmployeeID', 'AttributeType': 'S'},
+            {'AttributeName': 'Department', 'AttributeType': 'S'},
+            {'AttributeName': 'JoiningDate', 'AttributeType': 'S'}
+        ],
+        LocalSecondaryIndexes=[
+            {
+                'IndexName': 'DepartmentJoiningDateIndex',
+                'KeySchema': [
+                    {'AttributeName': 'EmployeeID', 'KeyType': 'HASH'},
+                    {'AttributeName': 'JoiningDate', 'KeyType': 'RANGE'}
+                ],
+                'Projection': {
+                    'ProjectionType': 'ALL'  # Include all attributes in the index
+                }
+            }
+        ],
+        ProvisionedThroughput={
+            'ReadCapacityUnits': 5,
+            'WriteCapacityUnits': 5
+        }
+    )
+    
+    table.meta.client.get_waiter('table_exists').wait(TableName='Employees')
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Table created successfully with LSI')
+    }
+-------------------------------------------------------------------
+---------------------------------------------------------------------
+
+Now adding the GSI 
+
+import json
+import boto3
+
+def lambda_handler(event, context):
+    dynamodb = boto3.client('dynamodb')
+    
+    response = dynamodb.update_table(
+        TableName='Employees',
+        AttributeDefinitions=[
+            {'AttributeName': 'Location', 'AttributeType': 'S'},
+            {'AttributeName': 'Salary', 'AttributeType': 'N'}
+        ],
+        GlobalSecondaryIndexUpdates=[
+            {
+                'Create': {
+                    'IndexName': 'LocationSalaryIndex',
+                    'KeySchema': [
+                        {'AttributeName': 'Location', 'KeyType': 'HASH'},
+                        {'AttributeName': 'Salary', 'KeyType': 'RANGE'}
+                    ],
+                    'Projection': {
+                        'ProjectionType': 'ALL'  # Include all attributes in the index
+                    },
+                    'ProvisionedThroughput': {
+                        'ReadCapacityUnits': 5,
+                        'WriteCapacityUnits': 5
+                    }
+                }
+            }
+        ]
+    )
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps('GSI added successfully')
+    }
+
+--------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Query using LSI: To find all employees in a specific department, sorted by their joining date
+
+
+import json
+import boto3
+from boto3.dynamodb.conditions import Key
+
+def lambda_handler(event, context):
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table('Employees')
+    
+    response = table.query(
+        IndexName='DepartmentJoiningDateIndex',
+        KeyConditionExpression=Key('EmployeeID').eq('DepartmentName') 
+    )
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps(response['Items'])
+    }
+
+
+
+-------------------------------------------------------------------------
+------------------------------------------------------------------------
+
+Query using GSI 
+To find all employees in a specific location, sorted by their salary
+
+
+import json
+import boto3
+from boto3.dynamodb.conditions import Key
+
+def lambda_handler(event, context):
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table('Employees')
+    
+    response = table.query(
+        IndexName='LocationSalaryIndex',
+        KeyConditionExpression=Key('Location').eq('New York')  
+    )
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps(response['Items'])
+    }
+
+
