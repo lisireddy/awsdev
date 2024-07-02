@@ -1,0 +1,42 @@
+HTTP
+-------------------------------------------------
+import json
+
+def lambda_handler(event, context):
+    # Log the incoming request
+    print("Received event: " + json.dumps(event))
+
+    # Parse the request body
+    body = json.loads(event['body'])
+    
+    # Extract name from the request body
+    name = body.get('name', 'World')
+    
+    # Log the name
+    print(f"Posted name: {name}")
+    
+    # Create a response
+    response = {
+        'message': f'Hello, {name}!'
+    }
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps(response)
+    }
+    ---------------------------------------------------
+
+    Cloud Shell 
+
+    
+curl -X POST \
+  https://<api-id>.execute-api.<region>.amazonaws.com/post \
+  -H "Content-Type: application/json" \
+  -d '{"name": "John"}'
+
+example 
+
+curl -X POST \
+  https://hulwns33rj.execute-api.ap-south-1.amazonaws.com/prod/LovePost \
+  -H "Content-Type: application/json" \
+  -d '{"name": "VayuTeja"}'
