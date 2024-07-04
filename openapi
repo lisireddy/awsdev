@@ -1,0 +1,55 @@
+openapi: 3.0.1
+info:
+  title: Student Management API
+  description: API for managing student information
+  version: 1.0.0
+paths:
+  /students/{studentId}:
+    get:
+      summary: Get student details
+      parameters:
+        - name: studentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  studentId:
+                    type: string
+                  name:
+                    type: string
+                  age:
+                    type: integer
+                  grade:
+                    type: string
+        '404':
+          description: Student not found
+  /students:
+    post:
+      summary: Add a new student
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                studentId:
+                  type: string
+                name:
+                  type: string
+                age:
+                  type: integer
+                grade:
+                  type: string
+      responses:
+        '201':
+          description: Student added successfully
+        '400':
+          description: Invalid input
