@@ -1,0 +1,53 @@
+Lambda Code 
+The lambda_handler function generates a random number and throws an exception if the number is less than 0.5.
+Otherwise, it returns a success message.
+
+-------------------------------------------
+import random
+
+def lambda_handler(event, context):
+    # Simulate an error condition randomly
+    if random.random() < 0.5:
+        raise Exception("Simulated error occurred")
+    
+    return {
+        'statusCode': 200,
+        'body': 'Success!'
+    }
+-----------------------------------------
+{
+  "Comment": "A simple AWS Step Functions state machine example with error handling",
+  "StartAt": "InvokeLambda",
+  "States": {
+    "InvokeLambda": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:890723668909:function:LambdaStpError:$LATEST",
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "HandleError"
+        }
+      ],
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException"
+          ],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ],
+      "End": true
+    },
+    "HandleError": {
+      "Type": "Pass",
+      "Result": "Error caught in Step Functions",
+      "End": true
+    }
+  }
+}
