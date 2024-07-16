@@ -1,0 +1,227 @@
+import json
+import boto3
+
+def lambda_handler(event, context):
+    # Create an SQS client
+    sqs = boto3.client('sqs')
+    
+    try:
+        # Create a standard SQS queue
+        response = sqs.create_queue(
+            QueueName='MyStandardQueue',
+            Attributes={
+                'DelaySeconds': '0',
+                'MessageRetentionPeriod': '86400'  # 1 day
+            }
+        )
+        
+        return {
+            'statusCode': 200,
+            'body': json.dumps('Standard SQS Queue Created Successfully: ' + response['QueueUrl'])
+        }
+        
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'body': json.dumps('Error creating SQS Queue: ' + str(e))
+        }
+
+---------------------------------------------------------------------------------------
+
+import json
+import boto3
+
+def lambda_handler(event, context):
+    # Create an SQS client
+    sqs = boto3.client('sqs')
+    
+    try:
+        # Create a FIFO SQS queue
+        response = sqs.create_queue(
+            QueueName='MyFifoQueue.fifo',
+            Attributes={
+                'FifoQueue': 'true',
+                'ContentBasedDeduplication': 'true',
+                'MessageRetentionPeriod': '86400'  # 1 day
+            }
+        )
+        
+        return {
+            'statusCode': 200,
+            'body': json.dumps('FIFO SQS Queue Created Successfully: ' + response['QueueUrl'])
+        }
+        
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'body': json.dumps('Error creating FIFO SQS Queue: ' + str(e))
+        }
+
+----------------------------------------------------------
+
+import json
+import boto3
+
+def lambda_handler(event, context):
+    # Create an SQS client
+    sqs = boto3.client('sqs')
+    
+    # Standard queue URL
+    queue_url = 'https://sqs.us-east-1.amazonaws.com/890723668909/MyStandardQueue'
+    
+    try:
+        # Parse the message from the event (assuming JSON format)
+        message_body = "Love"
+        
+        # Send the message to the standard queue
+        response = sqs.send_message(
+            QueueUrl=queue_url,
+            MessageBody=json.dumps(message_body)
+        )
+        
+        return {
+            'statusCode': 200,
+            'body': json.dumps('Message sent to Standard Queue: ' + response['MessageId'])
+        }
+        
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'body': json.dumps('Error sending message to Standard Queue: ' + str(e))
+        }
+
+---------------------------------------------------------------
+
+import json
+import boto3
+
+def lambda_handler(event, context):
+    # Create an SQS client
+    sqs = boto3.client('sqs')
+    
+    # FIFO queue URL
+    queue_url = 'https://sqs.us-east-1.amazonaws.com/890723668909/MyFifoQueue.fifo'
+    
+    try:
+        # Parse the message from the event (assuming JSON format)
+        message_body = "VayuTeja"
+        
+        # Send the message to the FIFO queue
+        response = sqs.send_message(
+            QueueUrl=queue_url,
+            MessageBody=json.dumps(message_body),
+            MessageGroupId='default',  # MessageGroupId is required for FIFO queues
+            MessageDeduplicationId= "10111" # Use the event messageId as deduplication ID
+        )
+        
+        return {
+            'statusCode': 200,
+            'body': json.dumps('Message sent to FIFO Queue: ' + response['MessageId'])
+        }
+        
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'body': json.dumps('Error sending message to FIFO Queue: ' + str(e))
+        }
+
+
+---------------------------------------------------------------------
+
+import json
+import boto3
+
+def lambda_handler(event, context):
+    # Create an SQS client
+    sqs = boto3.client('sqs')
+    
+    # Standard queue URL
+    queue_url = 'https://sqs.us-east-1.amazonaws.com/890723668909/MyStandardQueue'
+    
+    try:
+        # Receive messages from the queue
+        response = sqs.receive_message(
+            QueueUrl=queue_url,
+            MaxNumberOfMessages=10,  # Adjust the number of messages to read
+            WaitTimeSeconds=5  # Long polling
+        )
+        
+        messages = response.get('Messages', [])
+        
+        if not messages:
+            return {
+                'statusCode': 200,
+                'body': json.dumps('No messages in the queue.')
+            }
+        
+        for message in messages:
+            # Print out the message body
+            print("Received message: ", message['Body'])
+            
+            # Delete the message from the queue
+            sqs.delete_message(
+                QueueUrl=queue_url,
+                ReceiptHandle=message['ReceiptHandle']
+            )
+        
+        return {
+            'statusCode': 200,
+            'body': json.dumps(f'{len(messages)} messages received and deleted.')
+        }
+        
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'body': json.dumps('Error reading messages from Standard Queue: ' + str(e))
+        }
+
+------------------------------------------------------------------
+
+import json
+import boto3
+
+def lambda_handler(event, context):
+    # Create an SQS client
+    sqs = boto3.client('sqs')
+    
+    # FIFO queue URL
+    queue_url = 'https://sqs.us-east-1.amazonaws.com/890723668909/MyFifoQueue.fifo'
+    
+    try:
+        # Receive messages from the queue
+        response = sqs.receive_message(
+            QueueUrl=queue_url,
+            MaxNumberOfMessages=10,  # Adjust the number of messages to read
+            WaitTimeSeconds=5  # Long polling
+        )
+        
+        messages = response.get('Messages', [])
+        
+        if not messages:
+            return {
+                'statusCode': 200,
+                'body': json.dumps('No messages in the queue.')
+            }
+        
+        for message in messages:
+            # Print out the message body
+            print("Received message: ", message['Body'])
+            
+            # Delete the message from the queue
+            sqs.delete_message(
+                QueueUrl=queue_url,
+                ReceiptHandle=message['ReceiptHandle']
+            )
+        
+        return {
+            'statusCode': 200,
+            'body': json.dumps(f'{len(messages)} messages received and deleted.')
+        }
+        
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'body': json.dumps('Error reading messages from FIFO Queue: ' + str(e))
+        }
+
+
