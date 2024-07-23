@@ -1,0 +1,26 @@
+import json
+import boto3
+
+def lambda_handler(event, context):
+    sns_client = boto3.client('sns')
+    
+    # Create an SNS topic
+    topic_name = 'MySNSTopic'
+    response = sns_client.create_topic(Name=topic_name)
+    topic_arn = response['TopicArn']
+    
+    # List of emails to subscribe
+    emails = ['example1@example.com', 'example2@example.com']
+    
+    # Subscribe each email to the SNS topic
+    for email in emails:
+        sns_client.subscribe(
+            TopicArn=topic_arn,
+            Protocol='email',
+            Endpoint=email
+        )
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps('SNS topic created and emails subscribed successfully!')
+    }
