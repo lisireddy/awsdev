@@ -1,0 +1,78 @@
+Kinesis Producer Lambda 
+-------------------------------------------------------------------
+import json
+import boto3
+import os
+
+# Initialize Kinesis client
+kinesis_client = boto3.client('kinesis', region_name='us-east-1')
+
+stream_name = 'MyDemoStream'
+
+def lambda_handler(event, context):
+    # Sample data to send
+    data = {
+        'message': 'Hello from Lambda as a Kinesis Data Pro!'
+    }
+    
+    partition_key = 'partitionKey-1'
+    
+    try:
+        response = kinesis_client.put_record(
+            StreamName=stream_name,
+            Data=json.dumps(data),
+            PartitionKey=partition_key
+        )
+        print(f'Successfully sent data to Kinesis: {response}')
+    except Exception as e:
+        print(f'Error sending data to Kinesis: {str(e)}')
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Data sent to Kinesis!')
+    }
+
+---------------------------------------------------------------
+
+
+Kinesis Consumer 
+
+import json
+import base64
+
+def lambda_handler(event, context):
+    for record in event['Records']:
+        # Decode the Kinesis data
+        payload = base64.b64decode(record['kinesis']['data']).decode('utf-8')
+        data = json.loads(payload)
+        print(f'Received record: {data}')
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Processed records successfully')
+    }
+
+-Test Event -
+
+import json
+import base64
+
+def lambda_handler(event, context):
+    for record in event['Records']:
+        # Decode the Kinesis data
+        payload = base64.b64decode(record['kinesis']['data']).decode('utf-8')
+        data = json.loads(payload)
+        print(f'Received record: {data}')
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Processed records successfully')
+    }
+
+
+
+
+
+
+
+
