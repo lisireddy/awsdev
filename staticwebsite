@@ -1,0 +1,97 @@
+****index.html*********
+----------------------------------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello AWS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        h1 {
+            color: #2d72d9;
+            font-size: 3em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Hello AWS</h1>
+</body>
+</html>
+----------------------------------------------------
+***** styles.css *******
+---------------------------------------------------
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+}
+
+h1 {
+    color: #2d72d9;
+    font-size: 3em;
+}
+-------------------------------------------
+*** Error.html *****
+--------------------------------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        h1 {
+            color: #d93025;
+            font-size: 3em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Error: Page Not Found</h1>
+</body>
+</html>
+-------------------------------------------------------------
+**************** Key Point : *****************************
+We should not block the Public Access ( Uncheck that when you are creating the Bucket ) -- 
+Properties Tab -- Static website --> Enable --> provide our both file names .. 
+
+Once the Code is uploaded then we can update the policy 
+
+*** Permission --> Bucket Policy ***
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "PublicReadGetObject",
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::my-loveaws2-website-bucket/*"
+        }
+    ]
+}
+
+------------------------------------------------------
