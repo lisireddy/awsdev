@@ -1,0 +1,130 @@
+Exam01_Random Selection from Various Sources 
+
+1.You have an application hosted on an EC2 instance that needs to securely access objects in an S3 bucket. What is the most secure way to grant access?
+A) Store the AWS access keys in the application code
+B) Use AWS Identity and Access Management (IAM) roles for EC2
+C) Create a user in IAM and store the access keys in the EC2 instance
+D) Use AWS Lambda to access S3
+-------------------------------------
+2.Your application is processing images uploaded to an S3 bucket. You want to automatically trigger an AWS Lambda function whenever a new image is uploaded. Which feature would you use?
+A) Amazon S3 Event Notifications
+B) AWS Step Functions
+C) Amazon CloudWatch Events
+D) Amazon SNS
+-----------------------------------
+3.You need to develop a serverless application that requires backend code execution in response to HTTP requests. Which AWS service should you use?
+A) Amazon EC2
+B) AWS Lambda with API Gateway
+C) Amazon RDS
+D) AWS Elastic Beanstalk
+---------------------------------
+4.An application running on multiple EC2 instances needs to store session state information, which must be shared among all instances. Which AWS service would be the most appropriate for this use case?
+A) Amazon S3
+B) Amazon RDS
+C) Amazon ElastiCache
+D) Amazon SQS
+--------------------------------------
+5.A developer is designing a highly available web application using AWS Elastic Beanstalk. What configuration should the developer choose to ensure high availability?
+A) Deploy the application in a single Availability Zone
+B) Use a Load Balancer and deploy across multiple Availability Zones
+C) Use Spot Instances for cost savings
+D) Use Amazon RDS in a single AZ
+---------------------------------------
+6.Your team is using AWS Lambda functions to handle image processing. Each function needs to access sensitive API keys stored securely. What is the best practice for storing and accessing these keys?
+A) Hard-code the keys in the Lambda function code
+B) Store the keys in an S3 bucket
+C) Use AWS Secrets Manager or AWS Systems Manager Parameter Store
+D) Store the keys in DynamoDB
+---------------------------------------
+7.You are asked to migrate an existing on-premises MySQL database to AWS with minimal downtime. Which AWS service is best suited for this requirement?
+A) AWS Database Migration Service (DMS)
+B) AWS Snowball
+C) Amazon S3
+D) AWS Glue
+--------------------------------------
+8.An application running on AWS Lambda requires frequent access to a large dataset. Which AWS service can provide the fastest data retrieval for Lambda?
+A) Amazon S3
+B) Amazon RDS
+C) Amazon DynamoDB
+D) Amazon EFS
+-----------------------------------------
+9.Your application needs to perform asynchronous processing of messages sent from different parts of the application stack. Which AWS service is ideal for this use case?
+A) Amazon SNS
+B) Amazon SQS
+C) Amazon Kinesis
+D) AWS Step Functions
+---------------------------------------------
+10.A developer needs to troubleshoot a Lambda function that is failing to execute correctly. Which AWS service provides detailed logs to debug this issue?
+A) AWS CloudTrail
+B) Amazon CloudWatch Logs
+C) AWS X-Ray
+D) AWS Trusted Advisor
+------------------------------------------
+11.You need to ensure that your web application, hosted on EC2 instances behind an Application Load Balancer, is fault-tolerant and can handle high traffic. Which strategy should you implement?
+A) Use a single large EC2 instance to handle traffic
+B) Use Auto Scaling groups across multiple Availability Zones
+C) Deploy all instances in a single Availability Zone
+D) Use AWS Shield for protection
+-----------------------------------------------
+12.Your application needs to read from an Amazon Kinesis Data Stream and process data with a delay of no more than 1 second. Which AWS service or feature should you use for processing?
+A) AWS Lambda with Kinesis Data Streams
+B) Amazon S3 with Kinesis Data Streams
+C) Amazon RDS
+D) AWS Glue
+------------------------------------------------
+13.A company wants to set up a continuous integration and continuous delivery (CI/CD) pipeline for its serverless application. Which AWS service can be used to deploy AWS Lambda functions and API Gateway APIs from a source repository?
+A) AWS CodeDeploy
+B) AWS CodePipeline
+C) AWS CloudFormation
+D) AWS Elastic Beanstalk
+--------------------------------------------------
+14.You want to host a static website on AWS. Which combination of services would you use?
+A) Amazon EC2 and Amazon RDS
+B) Amazon S3 and Amazon CloudFront
+C) AWS Lambda and Amazon API Gateway
+D) Amazon EFS and Amazon Route 53
+--------------------------------------------------
+15.An application requires frequent reads and writes to a key-value store. Which AWS service would offer the lowest latency and high scalability for this use case?
+A) Amazon RDS
+B) Amazon DynamoDB
+C) Amazon S3
+D) Amazon Redshift
+----------------------------------------------------
+16.A Lambda function needs to access an Amazon RDS instance in a private subnet. What is the best approach to allow this access?
+A) Deploy the Lambda function in the same private subnet
+B) Create a VPC endpoint for the RDS instance
+C) Attach the Lambda function to the VPC with appropriate security group and subnet settings
+D) Use AWS Direct Connect
+-----------------------------------------------
+17.You are building a serverless REST API with AWS Lambda and API Gateway. Which method should you use to pass sensitive information like database credentials to the Lambda function?
+A) Hard-code credentials in the function code
+B) Pass credentials through API Gateway headers
+C) Store credentials in AWS Secrets Manager or Systems Manager Parameter Store and access them from the Lambda function
+D) Store credentials in Amazon S3
+---------------------------------------------------
+18.Your company needs to monitor and analyze API requests in real time to detect anomalies. Which AWS service can provide this capability?
+A) Amazon CloudWatch Logs
+B) AWS X-Ray
+C) Amazon CloudFront
+D) AWS WAF
+-------------------------------------
+19.A developer wants to automate the creation of AWS resources across multiple environments, such as development, testing, and production. Which service would best support this automation?
+A) AWS Elastic Beanstalk
+B) AWS CloudFormation
+C) Amazon EC2 Auto Scaling
+D) AWS OpsWorks
+--------------------------------------
+20. You are setting up AWS X-Ray to trace requests for a distributed application. How would you ensure that your application sends data to X-Ray?
+A) Install the X-Ray agent on each EC2 instance
+B) Enable X-Ray tracing for Lambda functions or API Gateway
+C) Both A and B
+D) None of the above
+--------------------------------------------------
+
+
+
+
+
+
+
+
